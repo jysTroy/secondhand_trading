@@ -59,6 +59,5 @@ public class JoinValidator implements Validator, PasswordValidator, MobileValida
         if (!checkMobile(mobile)) {
             errors.rejectValue("mobile", "Format");
         }
-
     }
 }

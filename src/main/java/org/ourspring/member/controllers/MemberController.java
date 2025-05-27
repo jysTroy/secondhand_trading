@@ -3,6 +3,7 @@ package org.ourspring.member.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ourspring.global.libs.Utils;
+
 import org.ourspring.member.services.JoinService;
 import org.ourspring.member.validators.JoinValidator;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ public class MemberController {
     private final Utils utils;
     private final JoinValidator joinValidator;
     private final JoinService joinService;
+
 
     @ModelAttribute("addCss")
     public List<String> addCss() {
@@ -50,9 +52,11 @@ public class MemberController {
             return utils.tpl("member/join");
         }
 
+      
         joinService.process(form);
 
         // 회원가입 성공시
+
         return "redirect:/member/login";
     }
 
@@ -62,6 +66,7 @@ public class MemberController {
 
         return utils.tpl("member/login");
     }
+
 
     /**
      * 현재 컨트롤러의 공통 처리 부분
@@ -76,6 +81,7 @@ public class MemberController {
         List<String> addScript = new ArrayList<>();
 
         if (mode.equals("join")) { // 회원 가입 공통 처리
+        if (mode.equals("join")) {
             addCommonScript.add("fileManager");
             addScript.add("member/join");
             pageTitle = utils.getMessage("회원가입");
