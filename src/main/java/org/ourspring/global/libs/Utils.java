@@ -15,7 +15,6 @@ public class Utils {
 
     private final HttpServletRequest request;
     private final MessageSource messageSource;
-
     private final LocaleResolver localeResolver;
 
     /**
@@ -42,6 +41,7 @@ public class Utils {
     public boolean isMobile() {
         String ua = request.getHeader("User-Agent");
         String pattern = ".*(iPhone|iPod|iPad|BlackBerry|Android|Windows CE|LG|MOT|SAMSUNG|SonyEricsson).*";
+      
         return StringUtils.hasText(ua) && ua.matches(pattern);
     }
 
