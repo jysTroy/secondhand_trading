@@ -2,8 +2,8 @@ package org.ourspring.member.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.ourspring.global.exceptions.script.AlertException;
 import org.ourspring.global.libs.Utils;
-
 import org.ourspring.member.services.JoinService;
 import org.ourspring.member.validators.JoinValidator;
 import org.springframework.http.HttpStatus;
@@ -59,6 +59,11 @@ public class MemberController {
     @GetMapping("/login")
     public String login(@ModelAttribute RequestLogin form, Model model) {
         commonProcess("login", model);
+
+        boolean result = false;
+        if (!result) {
+            throw new AlertException("테스트 에러!!", HttpStatus.BAD_REQUEST);
+        }
 
         return utils.tpl("member/login");
     }
