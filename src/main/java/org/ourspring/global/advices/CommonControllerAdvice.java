@@ -35,11 +35,12 @@ public class CommonControllerAdvice {
             // 자바스크립트 alert 형태로 출력하는 예외
             if (e instanceof AlertException) {
                 tpl = "common/_execute_script";
-
                 String script = String.format("alert('%s');", message);
 
-                data.put("script",script);
+
+                data.put("script", script);
             }
+
         }
 
         data.put("status", status.toString());
