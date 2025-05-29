@@ -1,5 +1,7 @@
 package org.ourspring.global.configs;
 
+import org.ourspring.member.services.LoginFailureHandler;
+import org.ourspring.member.services.LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,13 +19,12 @@ public class SecurityConfig {
             c.loginPage("/member/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/")
-                    .failureUrl("/member/login");
+                    .successHandler(new LoginSuccessHandler())
+                    .failureHandler(new LoginFailureHandler());
         });
-
         /* 인증 설정 - 로그인, 로그아웃 E */
 
-        return  http.build();
+        return http.build();
     }
 
     @Bean
