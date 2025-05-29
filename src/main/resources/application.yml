@@ -1,7 +1,7 @@
 server:
   port: 3000
   servlet:
-    session.cookie.name: f7e3a280d
+    session.cookie.name: b8a5f3fb
 
 spring:
   # flyway 설정

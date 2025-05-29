@@ -2,7 +2,6 @@ package org.koreait.member.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.koreait.global.exceptions.script.Alertexception;
 import org.koreait.global.libs.Utils;
 import org.koreait.member.services.JoinService;
 import org.koreait.member.validators.JoinValidator;
@@ -56,14 +55,9 @@ public class MemberController {
         return "redirect:/member/login";
     }
 
-    @GetMapping("login")
+    @GetMapping("/login")
     public String login(@ModelAttribute RequestLogin form, Model model) {
-        commonProcess("join", model);
-
-        boolean result = false;
-        if (!result) {
-            throw new Alertexception("테스트 에러", HttpStatus.BAD_REQUEST);
-        }
+        commonProcess("login", model);
 
         return utils.tpl("member/login");
     }
@@ -88,6 +82,7 @@ public class MemberController {
         } else if (mode.equals("login")) { // 로그인 공통 처리
             pageTitle = utils.getMessage("로그인");
         }
+
         model.addAttribute("addCommonScript", addCommonScript);
         model.addAttribute("addScript", addScript);
         model.addAttribute("pageTitle", pageTitle);

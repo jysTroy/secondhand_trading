@@ -4,8 +4,7 @@
     layout:decorate="~{front/layouts/main}">
 
 <th:block layout:fragment="addCommonCss">
-    <link rel="stylesheet" type="text/css"
-          th:href="@{/common/css/error.css?v=(v=${@utils.version()})}">
+    <link rel="stylesheet" type="text/css" th:href="@{/common/css/error.css?v=(v=${@utils.version()})}">
 </th:block>
 
 <main layout:fragment="content" class="error-page">
