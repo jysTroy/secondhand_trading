@@ -2,7 +2,6 @@ package org.ourspring.member.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.ourspring.global.exceptions.script.AlertRedirectException;
 import org.ourspring.global.libs.Utils;
 import org.ourspring.member.services.JoinService;
 import org.ourspring.member.validators.JoinValidator;
@@ -60,10 +59,7 @@ public class MemberController {
     public String login(@ModelAttribute RequestLogin form, Model model) {
         commonProcess("login", model);
 
-        boolean result = false;
-        if (!result) {
-            throw new AlertRedirectException("예외 발생 테스트", "/member/join");
-        }
+
 
         return utils.tpl("member/login");
     }
