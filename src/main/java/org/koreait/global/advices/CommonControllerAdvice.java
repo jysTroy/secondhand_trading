@@ -3,6 +3,8 @@ package org.koreait.global.advices;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.koreait.global.exceptions.CommonException;
+import org.koreait.global.exceptions.script.AlertBackException;
+import org.koreait.global.exceptions.script.AlertRedirectException;
 import org.koreait.global.exceptions.script.Alertexception;
 import org.koreait.global.libs.Utils;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,16 @@ public class CommonControllerAdvice {
             if (e instanceof Alertexception) {
                 tpl = "common/_execute_script";
                 String script = String.format("alert('%s');", message);
+
+                // history.back() 추가
+                if (e instanceof AlertBackException alertBackException) {
+                    script += String.format("%s.history.back();", alertBackException.getTarget());
+                }
+
+                // location.replace(...) 추가
+                if (e instanceof AlertRedirectException redirectException) {
+                    script += String.format("%s.location.replace('%s');", redirectException.getTarget(), redirectException.getUrl());
+                }
 
                 data.put("script", script);
             }
