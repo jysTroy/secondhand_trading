@@ -7,4 +7,8 @@ public class Alertexception extends CommonException {
     public Alertexception(String message, HttpStatus status) {
         super(message, status);
     }
+
+    public Alertexception(String message) {
+        this(message, HttpStatus.BAD_REQUEST);
+    }
 }
