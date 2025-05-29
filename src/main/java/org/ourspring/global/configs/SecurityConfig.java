@@ -18,7 +18,7 @@ public class SecurityConfig {
                     .usernameParameter("email")
                     .passwordParameter("password")
                     .defaultSuccessUrl("/")
-                    .failureUrl("/member/join");
+                    .failureUrl("/member/login");
         });
 
         /* 인증 설정 - 로그인, 로그아웃 E */
