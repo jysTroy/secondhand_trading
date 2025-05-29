@@ -17,6 +17,8 @@ public class SecurityConfig {
             c.loginPage("/member/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
+                    .successForwardUrl("/")
+                    .failureUrl("/member/login");
         });
         /* 인증 설정 - 로그인, 로그아웃 E */
 
