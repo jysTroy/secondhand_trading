@@ -3,7 +3,9 @@ package org.ourspring.global.advices;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.ourspring.global.exceptions.CommonException;
+import org.ourspring.global.exceptions.script.AlertBackException;
 import org.ourspring.global.exceptions.script.AlertException;
+import org.ourspring.global.exceptions.script.AlertRedirectException;
 import org.ourspring.global.libs.Utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,6 +39,15 @@ public class CommonControllerAdvice {
                 tpl = "common/_execute_script";
                 String script = String.format("alert('%s');", message);
 
+                // history.back() 추가
+                if (e instanceof AlertBackException alertBackException) {
+                    script += String.format("s.history.back();", alertBackException.getTarget());
+                }
+
+                // location.replace(...) 추가
+                if (e instanceof AlertRedirectException redirectException) {
+                    script += String.format("%s.location.replace('%s');", redirectException.getTarget(),request.getContextPath() + redirectException.getUrl());
+                }
 
                 data.put("script", script);
             }
