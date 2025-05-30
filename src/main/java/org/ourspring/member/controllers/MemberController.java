@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.ourspring.global.libs.Utils;
 import org.ourspring.member.services.JoinService;
 import org.ourspring.member.validators.JoinValidator;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -47,7 +46,6 @@ public class MemberController {
 
     // 회원가입 처리
     @PostMapping("/join")
-    @ResponseStatus(HttpStatus.CREATED) // 응답 코드 201
     public String joinPs(@Valid RequestJoin form, Errors errors, Model model) {
         commonProcess("join", model);
 
@@ -83,6 +81,17 @@ public class MemberController {
         /* 검증 실패 처리 E */
 
         return utils.tpl("member/login");
+    }
+
+    /**
+     * 비밀번호 만료시 변경 페이지
+     * @param model
+     * @return
+     */
+    @GetMapping("/password")
+    public String password(Model model){
+        commonProcess("password", model);
+        return utils.tpl("member/password");
     }
 
     /**
