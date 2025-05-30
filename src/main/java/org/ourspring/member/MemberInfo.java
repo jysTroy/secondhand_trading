@@ -63,5 +63,4 @@ public class MemberInfo implements UserDetails {
     public boolean isAccountNonLocked() {
         return !member.isLocked();
     }
-
 }
