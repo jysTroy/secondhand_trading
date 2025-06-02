@@ -1,10 +1,7 @@
 package org.ourspring.global.configs;
 
 import lombok.RequiredArgsConstructor;
-import org.ourspring.member.services.LoginFailureHandler;
-import org.ourspring.member.services.LoginSuccessHandler;
-import org.ourspring.member.services.MemberAuthenticationExceptionHandler;
-import org.ourspring.member.services.MemberInfoService;
+import org.ourspring.member.services.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
