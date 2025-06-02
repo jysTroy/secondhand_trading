@@ -2,12 +2,12 @@ package org.ourspring.member.libs;
 
 import org.ourspring.member.MemberInfo;
 import org.ourspring.member.constants.Authority;
+import org.ourspring.member.entities.Member;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Member;
 
 @Lazy
 @Component
