@@ -1,5 +1,7 @@
 package org.ourspring.admin.global.controllers;
 
+import org.ourspring.admin.global.menus.Menu;
+import org.ourspring.admin.global.menus.Menus;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
@@ -12,7 +14,7 @@ public abstract class CommonController {
     public abstract String mainCode();
 
     @ModelAttribute("subMenus")
-    public List<org.ourspring.admin.global.menus.Menu> subMenus() {
-        return org.ourspring.admin.global.menus.Menus.getMenus(mainCode());
+    public List<Menu> subMenus() {
+        return Menus.getMenus(mainCode());
     }
 }

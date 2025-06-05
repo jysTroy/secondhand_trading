@@ -62,12 +62,11 @@ main > .main-content {
 /* 메뉴 공통 S */
 main > aside a {
     display: block;
-    padding: 40px 10px;
+    padding: 25px 10px;
     text-align: center;
     font-size: 1.5rem;
     font-weight: 700;
     border-bottom: 1px solid #212121;
-
 }
 
 main > aside a.on {

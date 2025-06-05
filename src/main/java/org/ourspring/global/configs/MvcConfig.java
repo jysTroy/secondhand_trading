@@ -19,16 +19,10 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/");
     }
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/")
-                .setViewName("front/main/index");
-    }
-
     /**
-     * PATCH, PUT, DELETE 등의 요청 메서드를 사용하기 위한
+     * PATCH, PUT, DELETE 등의 요청 메서드를 사용하기 위한 설정
      * <form method="POST">
-     *   <input type='hidden' name='_method' value='PATCH
+     *  <input type='hidden' name='_method' value='PATCH'>
      * </form>
      * @return
      */
