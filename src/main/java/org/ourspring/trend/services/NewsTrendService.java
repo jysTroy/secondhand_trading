@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @EnableConfigurationProperties({PythonProperties.class, FileProperties.class})
-public class BoardTrendService {
+public class NewsTrendService {
 
     private final PythonProperties properties;
     private final FileProperties fileProperties;
