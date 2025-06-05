@@ -19,5 +19,4 @@ public abstract class BaseEntity {
 
     @Column("deletedAt")
     private LocalDateTime deletedAt;
-
 }
