@@ -12,4 +12,5 @@ public interface TrendRepository extends ListCrudRepository<Trend, Long> {
     @Query("SELECT * FROM TREND WHERE category=:category ORDER BY createdAt DESC LIMIT 1")
     Optional<Trend> getLatest(@Param("category") String category);
 
+
 }

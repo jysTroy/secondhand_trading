@@ -76,11 +76,12 @@ public class NewsTrendService {
      */
     @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.HOURS)
     public void scheduledJob() {
-        NewsTrend item = process();
-        if (item == null) return;
-        String wordCloud = String.format("%s%s/trend/%s", request.getContextPath(), fileProperties.getUrl(), item.getImage());
+
 
         try {
+            NewsTrend item = process();
+            if (item == null) return;
+            String wordCloud = String.format("%s%s/trend/%s", request.getContextPath(), fileProperties.getUrl(), item.getImage());
             String keywords = om.writeValueAsString(item.getKeywords());
             Trend data = new Trend();
             data.setCategory("NEWS");

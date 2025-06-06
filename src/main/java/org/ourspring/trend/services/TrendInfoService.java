@@ -32,7 +32,7 @@ public class TrendInfoService {
 
 
     /**
-     * 특정 날자의 트렌드 데이터 1개
+     * 특정 날짜의 트렌드 데이터 1개
      * @param date
      * @return
      */
@@ -42,7 +42,7 @@ public class TrendInfoService {
     }
 
     /**
-     * 특정 날짜 범위의 트렌트 데이터 조회
+     * 특정 날짜 범위의 트렌드 데이터 조회
      *
      * @return
      */
