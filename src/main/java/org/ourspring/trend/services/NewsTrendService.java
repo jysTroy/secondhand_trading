@@ -54,7 +54,6 @@ public class NewsTrendService {
                 builder = new ProcessBuilder(pythonPath, properties.getTrend() + "/trend.py",
                         fileProperties.getPath() + "/trend", search);
                 process = builder.start();
-                System.out.println(search);
                 int statusCode = process.waitFor();
                 if (statusCode == 0) {
                     String json = process.inputReader().lines().collect(Collectors.joining());
@@ -74,10 +73,10 @@ public class NewsTrendService {
     }
 
     /**
-     * 매 1시간 마다 주기적으로 뉴스 트렌드 데이터를 저장
+     * 매 24시간 마다 주기적으로 뉴스 트렌드 데이터를 저장
      *
      */
-    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedRate = 24L, timeUnit = TimeUnit.HOURS)
     public void scheduledJob() {
         try {
             TrendSearch search = new TrendSearch();
