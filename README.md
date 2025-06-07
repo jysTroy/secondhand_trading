@@ -15,10 +15,6 @@
 - 중요한 코드가 있으면 코드와 함께 설명
 - 구현화면에 대한 이미지
 
-## 7일간 데이터 끌어오기
-- from datetime import datetime, timedelta
-- for i in range(7):
-  date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
-  url = f"https://news.naver.com/main/list.naver?mode=LPOD&mid=sec&date={date}"
-  html = requests.get(url).text
-  soup = bs(html, 'html.parser')
+## 일정기간 데이터 끌어오기
+- 스프링 부트에서 조절
+- 확인할 데이터는 테이블에서 직접 수정
