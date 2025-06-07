@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Lazy
@@ -37,8 +39,13 @@ public class TrendInfoService {
      * @return
      */
     public Trend get(String category, LocalDate date) {
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.atTime(LocalTime.MAX);
 
-        return null;
+        return repository.getPeriodTrend(category, start, end)
+                .stream()
+                .findFirst()
+                .orElseThrow(TrendNotFoundException::new);
     }
 
     /**
@@ -47,7 +54,38 @@ public class TrendInfoService {
      * @return
      */
     public List<Trend> getList(String category, CommonSearch search) {
+        LocalDateTime start = search.getSDate().atStartOfDay();
+        LocalDateTime end = search.getEDate().atTime(23, 59, 59);
 
-        return null;
+        return repository.getPeriodTrend(category, start, end);
     }
+
+    /**
+     * 7일 간의 날짜 데이터 조회
+     */
+    public List<Trend> getLast7DateTrend(String category) {
+//        LocalDate firstDate = LocalDate.now();
+//        LocalDate finalDate = firstDate.minusDays(6);
+
+        CommonSearch search = new CommonSearch();
+        search.setSDate(LocalDate.now());
+        search.setEDate(LocalDate.now().minusDays(6));
+
+        return getList(category, search);
+    }
+
+    /**
+     * 30일 간의 날짜 데이터 조회
+     */
+    public List<Trend> getLast30DateTrend(String category) {
+//        LocalDate firstDate = LocalDate.now();
+//        LocalDate finalDate = firstDate.minusDays(29);
+
+        CommonSearch search = new CommonSearch();
+        search.setSDate(LocalDate.now());
+        search.setEDate(LocalDate.now().minusDays(29));
+
+        return getList(category, search);
+    }
+
 }

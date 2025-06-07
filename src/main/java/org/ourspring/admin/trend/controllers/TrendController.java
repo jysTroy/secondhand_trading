@@ -40,9 +40,15 @@ public class TrendController extends CommonController {
     @GetMapping("/etc")
     public String etc(@ModelAttribute TrendSearch search, Model model) {
         commonProcess("etc", model);
+        List<Trend> trends = infoService.getLast7DateTrend("NEWS");
+
+        model.addAttribute("trends", trends);
+
 
         return "admin/trend/etc";
     }
+
+
 
     /**
      * 공통 처리
@@ -68,4 +74,6 @@ public class TrendController extends CommonController {
         model.addAttribute("addScript", addScript);
         model.addAttribute("pageTitle", pageTitle);
     }
+
+
 }
