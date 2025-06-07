@@ -60,7 +60,8 @@ public class TrendController extends CommonController {
             addScript.add("trend/news");
             pageTitle = "오늘의 뉴스 트렌드";
         } else if (code.equals("etc")) {
-            // 팀별 소스 넣어주세요...
+            addScript.add("trend/etc");
+            pageTitle = "트렌드 분석";
         }
 
         model.addAttribute("subCode", code);

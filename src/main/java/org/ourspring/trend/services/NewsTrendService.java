@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.ourspring.admin.trend.controllers.TrendSearch;
 import org.ourspring.global.configs.FileProperties;
 import org.ourspring.global.configs.PythonProperties;
 import org.ourspring.trend.entities.NewsTrend;
@@ -33,7 +34,7 @@ public class NewsTrendService {
     private final HttpServletRequest request;
     private final ObjectMapper om;
 
-    public NewsTrend process() {
+    public NewsTrend process(String search) {
         // spring.profiles.active=default,prod
         boolean isProduction = Arrays.stream(ctx.getEnvironment().getActiveProfiles()).anyMatch(s -> s.equals("prod"));
 
@@ -50,8 +51,10 @@ public class NewsTrendService {
             ProcessBuilder builder = new ProcessBuilder(activationCommand); // 가상환경 활성화
             Process process = builder.start();
             if (process.waitFor() == 0) { // 정상 수행된 경우
-                builder = new ProcessBuilder(pythonPath, properties.getTrend() + "/trend.py", fileProperties.getPath() + "/trend");
+                builder = new ProcessBuilder(pythonPath, properties.getTrend() + "/trend.py",
+                        fileProperties.getPath() + "/trend", search);
                 process = builder.start();
+                System.out.println(search);
                 int statusCode = process.waitFor();
                 if (statusCode == 0) {
                     String json = process.inputReader().lines().collect(Collectors.joining());
@@ -76,11 +79,15 @@ public class NewsTrendService {
      */
     @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.HOURS)
     public void scheduledJob() {
-        NewsTrend item = process();
-        if (item == null) return;
-        String wordCloud = String.format("%s%s/trend/%s", request.getContextPath(), fileProperties.getUrl(), item.getImage());
-
         try {
+            TrendSearch search = new TrendSearch();
+            search.setSiteUrl("https://sports.daum.net/"); // 테스트 진행을 위한 임의 세팅 | 홈페이지에서 조회하기를 누르면 값이 설정됨
+            if(search.getSiteUrl() == null || search.getSiteUrl().isBlank()) return;
+
+            NewsTrend item = process(search.getSiteUrl());
+            if (item == null) return;
+
+            String wordCloud = String.format("%s%s/trend/%s", request.getContextPath(), fileProperties.getUrl(), item.getImage());
             String keywords = om.writeValueAsString(item.getKeywords());
             Trend data = new Trend();
             data.setCategory("NEWS");
