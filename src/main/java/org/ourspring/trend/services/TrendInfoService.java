@@ -23,6 +23,8 @@ public class TrendInfoService {
 
     private final TrendRepository repository;
 
+    //private final TrendCrawllingService crawllingService;
+
     private final ObjectMapper om;
 
     /**
@@ -65,9 +67,10 @@ public class TrendInfoService {
     }
 
 
+/*
     // 트렌드 데이터 조회
     public Map<String, Object> getStat(String url) {
-        sssss.process(url); // 데이터 한번 수집
+        crawllingService.process(url); // 데이터 한번 수집
 
         Map<String, Object> statData = new HashMap<>(); // 통계 데이터
 
@@ -83,11 +86,7 @@ public class TrendInfoService {
         CommonSearch search = new CommonSearch();
         search.setEDate(today);
 
-        /**
-         * 통계 데이터는 일별 키워드의 조회수 평균을 구한다.
-         *
-         */
-        // 일주일간 통계 S
+        // 일주일 트렌드
         search.setSDate(last7Date);
         List<Trend> last7Days = getList(category, search);
         Map<LocalDate, Map<String, Integer>> last7DayData = preprocessing(last7Days);
@@ -95,13 +94,12 @@ public class TrendInfoService {
         statData.put("oneWeekWordCloud", getWordCloudPath(last7DayData));
         // 일주일간 통계 E
 
-        // 한달간 통계 S
+        // 한달 트렌드
         search.setSDate(last30Date);
         List<Trend> last30Days = getList(category, search);
         Map<LocalDate, Map<String, Integer>> last30DayData = preprocessing(last30Days);
         statData.put("oneMonth", last30DayData);
         statData.put("oneMonthWordCloud", getWordCloudPath(last30DayData));
-        // 한달간 통계 E
 
 
         // JSON 변환 데이터
@@ -158,12 +156,12 @@ public class TrendInfoService {
 
         try {
             String json = om.writeValueAsString(items);
-            return sssss.createWordCloud(json);
+            return crawllingService.createWordCloud(json);
         } catch (JsonProcessingException e) {}
 
         return null;
     }
-
+*/
 
     /**
      * 7일 간의 날짜 데이터 조회
