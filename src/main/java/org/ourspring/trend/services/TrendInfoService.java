@@ -48,7 +48,7 @@ public class TrendInfoService {
      * @return
      */
     public Trend get(String category, LocalDate date) {
-        return repository.getDate(category, date.atStartOfDay(), LocalDateTime.of(date, LocalTime.of(23, 59, 59))).orElse(null);
+        return repository.get(category, date.atStartOfDay(), LocalDateTime.of(date, LocalTime.of(23, 59, 59))).orElse(null);
     }
 
     /**
@@ -77,7 +77,7 @@ public class TrendInfoService {
 
         Map<String, Object> statData = new HashMap<>(); // 통계 데이터
 
-        String category = url.contains("news.naver.com") ? "NEWS" : "" + Objects.hash(url);
+        String category = url.contains("news.naver.com") ? "NEWS" : "ETC_" + Objects.hash(url);
         LocalDate today = LocalDate.now();
         LocalDate last7Date = today.minusDays(6L); // 일주일 전
         LocalDate last30Date = today.minusDays(29L); // 한달 전
