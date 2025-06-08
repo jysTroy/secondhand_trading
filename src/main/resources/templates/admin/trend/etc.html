@@ -9,7 +9,7 @@
 
 <section layout:fragment="content">
     <h1>오늘의 트렌드</h1>
-    <form name="frmSearch" method="get" th:object="${trendSearch}" autocomplete="off">
+    <form name="frmSearch" method="get" th:object="${trendUrl}" autocomplete="off">
         사이트 주소 :
         <input type="text" name="siteUrl" th:field="*{siteUrl}">
         <button type="submit">조회하기</button>
