@@ -38,14 +38,14 @@ public class TrendController extends CommonController {
         return "admin/trend/news";
     }
 
-    /*
+
     @GetMapping("/etc")
     public String etc(@ModelAttribute TrendUrl search, Model model) {
         commonProcess("etc", model);
         String url = search.getSiteUrl();
 
         if (StringUtils.hasText(url)) {
-            Map<String, Object> data = infoService.getStat(url); getStat 메서드 완성시
+            Map<String, Object> data = infoService.getStat(url);
             model.addAllAttributes(data);
 
         }
