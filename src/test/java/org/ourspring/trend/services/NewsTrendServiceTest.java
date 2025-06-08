@@ -8,12 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class NewsTrendServiceTest {
 
     @Autowired
-    private NewsTrendService service;
+    private TrendCrawlingService service;
 
     @Test
     void test() {
         //NewsTrend data = service.process();
         //System.out.println(data);
-        service.scheduledJob();
+        service.process("https://news.naver.com/");
     }
 }
