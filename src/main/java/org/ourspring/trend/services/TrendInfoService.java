@@ -48,7 +48,7 @@ public class TrendInfoService {
      * @return
      */
     public Trend get(String category, LocalDate date) {
-        return repository.getDate(category, date.atStartOfDay(), LocalDateTime.of(date, LocalTime.of(23, 59, 59))).orElse(null);
+        return repository.get(category, date.atStartOfDay(), LocalDateTime.of(date, LocalTime.of(23, 59, 59))).orElse(null);
     }
 
     /**
@@ -57,9 +57,6 @@ public class TrendInfoService {
      * @return
      */
     public List<Trend> getList(String category, CommonSearch search) {
-//        LocalDateTime start = search.getSDate().atStartOfDay();
-//        LocalDateTime end = search.getEDate().atTime(23, 59, 59);
-//        List<Trend> data = repository.getPeriodTrend(category, start, end);
 
         LocalDate start = Objects.requireNonNullElse(search.getSDate(), LocalDate.now());
         LocalDate end = Objects.requireNonNullElse(search.getEDate(), LocalDate.now());
@@ -76,7 +73,7 @@ public class TrendInfoService {
 
         Map<String, Object> statData = new HashMap<>(); // 통계 데이터
 
-        String category = url.contains("news.naver.com") ? "NEWS" : "" + Objects.hash(url);
+        String category = url.contains("news.naver.com") ? "NEWS" : "ETC_" + Objects.hash(url);
         LocalDate today = LocalDate.now();
         LocalDate last7Date = today.minusDays(6L); // 일주일 전
         LocalDate last30Date = today.minusDays(29L); // 한달 전
@@ -94,7 +91,6 @@ public class TrendInfoService {
         Map<LocalDate, Map<String, Integer>> last7DayData = preprocessing(last7Days);
         statData.put("oneWeek", last7DayData);
         statData.put("oneWeekWordCloud", getWordCloudPath(last7DayData));
-        // 일주일간 통계 E
 
         // 한달 트렌드
         search.setSDate(last30Date);

@@ -15,29 +15,35 @@
         <button type="submit">조회하기</button>
     </form>
 
-    <div th:if="${item != null}" th:object="${item}">
-        <img th:src="*{wordCloud}" alt="오늘의 트렌드">
-        <div class="chart-wrap">
-            <canvas id="myChart"></canvas>
-        </div>
-    </div>
+    <th:block th:if="${json == null}">
+        <div class="message">트렌드를 조회할 사이트 주소를 입력하세요.</div>
+    </th:block>
 
-    <div th:if="${item != null}" th:object="${item}">
+    <th:block th:unless="${json == null}">
+        <h2>현재 트렌드</h2>
+        <img th:src="${now.wordCloud}" alt="오늘 워드클라우드" style="max-width: 50%; height: auto;">
+
+        <div class="chart-wrap">
+            <canvas id="now-chart"></canvas>
+        </div>
+
         <h2>일주일간의 누적 트렌드</h2>
-        <img th:src="*{wordCloud}" alt="일주일간의 워드 클라우드">
-        <div class="chart-wrap">
-            <canvas id="lineChart1"></canvas>
-        </div>
-    </div>
+        <img th:src="${oneWeekWordCloud}" alt="일주일 워드클라우드" style="max-width: 50%; height: auto;">
 
-    <div th:if="${item != null}" th:object="${item}">
+        <div class="chart-wrap">
+            <canvas id="week-chart"></canvas>
+        </div>
+
+
         <h2>한달간의 누적 트렌드</h2>
-        <img th:src="*{wordCloud}">
-        <div class="chart-wrap">
-            <canvas id="lineChart2"></canvas>
-        </div>
-    </div>
+        <img th:src="${oneMonthWordCloud}" alt="한달 워드클라우드" style="max-width: 50%; height: auto;">
 
-    <script type="application/json" id="chart-data" th:utext="*{keywords}"></script>
+        <div class="chart-wrap">
+            <canvas id="month-chart"></canvas>
+        </div>
+
+        <script type="application/json" id="chart-data" th:utext="${json}"></script>
+    </th:block>
 </section>
+
 </html>
