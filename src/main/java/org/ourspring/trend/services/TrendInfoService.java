@@ -24,7 +24,7 @@ public class TrendInfoService {
 
     private final TrendRepository repository;
 
-    private final TrendCrawllingService crawllingService;
+    private final TrendCrawlingService crawlingService;
 
     private final ObjectMapper om;
 
@@ -73,7 +73,7 @@ public class TrendInfoService {
     // 트렌드 데이터 조회
     public Map<String, Object> getStat(String url) {
 
-        crawllingService.process(url); // 데이터 한번 수집
+        crawlingService.process(url); // 데이터 한번 수집
 
         Map<String, Object> statData = new HashMap<>(); // 통계 데이터
 
@@ -160,7 +160,7 @@ public class TrendInfoService {
         try {
             String json = om.writeValueAsString(items);
 
-            return crawllingService.createWordCloud(json);
+            return crawlingService.createWordCloud(json);
 
         } catch (JsonProcessingException e) {}
 
