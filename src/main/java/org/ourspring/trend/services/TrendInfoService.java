@@ -23,7 +23,9 @@ import java.util.*;
 public class TrendInfoService {
 
     private final TrendRepository repository;
-    private final TrendCrawlingService crawllingService;
+
+    private final TrendCrawlingService crawlingService;
+
     private final ObjectMapper om;
 
     /**
@@ -38,6 +40,7 @@ public class TrendInfoService {
         TrendUrl search = new TrendUrl();
         return item;
     }
+
 
     /**
      * 특정 날짜의 트렌드 데이터 1개
@@ -65,10 +68,12 @@ public class TrendInfoService {
         return data;
     }
 
+
+
     // 트렌드 데이터 조회
     public Map<String, Object> getStat(String url) {
 
-        crawllingService.process(url); // 데이터 한번 수집
+        crawlingService.process(url); // 데이터 한번 수집
 
         Map<String, Object> statData = new HashMap<>(); // 통계 데이터
 
@@ -155,35 +160,12 @@ public class TrendInfoService {
         try {
             String json = om.writeValueAsString(items);
 
-            return crawllingService.createWordCloud(json);
+            return crawlingService.createWordCloud(json);
 
         } catch (JsonProcessingException e) {}
 
         return null;
     }
 
-    /**
-     * 7일 간의 날짜 데이터 조회
-     */
-    public List<Trend> getLast7DateTrend(String category) {
-
-        CommonSearch search = new CommonSearch();
-        search.setSDate(LocalDate.now());
-        search.setEDate(LocalDate.now().minusDays(6L));
-
-        return getList(category, search);
-    }
-
-    /**
-     * 30일 간의 날짜 데이터 조회
-     */
-    public List<Trend> getLast30DateTrend(String category) {
-
-        CommonSearch search = new CommonSearch();
-        search.setSDate(LocalDate.now());
-        search.setEDate(LocalDate.now().minusDays(29L));
-
-        return getList(category, search);
-    }
 
 }
