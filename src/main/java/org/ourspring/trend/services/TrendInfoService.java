@@ -23,9 +23,7 @@ import java.util.*;
 public class TrendInfoService {
 
     private final TrendRepository repository;
-
-    private final TrendCrawllingService crawllingService;
-
+    private final TrendCrawlingService crawllingService;
     private final ObjectMapper om;
 
     /**
@@ -40,7 +38,6 @@ public class TrendInfoService {
         TrendUrl search = new TrendUrl();
         return item;
     }
-
 
     /**
      * 특정 날짜의 트렌드 데이터 1개
@@ -67,8 +64,6 @@ public class TrendInfoService {
 
         return data;
     }
-
-
 
     // 트렌드 데이터 조회
     public Map<String, Object> getStat(String url) {
