@@ -15,21 +15,29 @@
         <button type="submit">조회하기</button>
     </form>
 
-    1. 워드 클라우드 이미지<br>
-    2. 파이 그래프<br>
-
-    <h2>일주일간의 누적 트렌드</h2>
-    <section>
-        <div th:each="trend : ${trends7}">
-            <img th:src="*{wordCloud}">
+    <div th:if="${item != null}" th:object="${item}">
+        <img th:src="*{wordCloud}" alt="오늘의 트렌드">
+        <div class="chart-wrap">
+            <canvas id="myChart"></canvas>
         </div>
-    </section>
+    </div>
 
-    1. 워드 클라우드 이미지<br>
-    2. 일자별 키워드별 꺾은선 그래프
+    <div th:if="${item != null}" th:object="${item}">
+        <h2>일주일간의 누적 트렌드</h2>
+        <img th:src="*{wordCloud}" alt="일주일간의 워드 클라우드">
+        <div class="chart-wrap">
+            <canvas id="lineChart1"></canvas>
+        </div>
+    </div>
 
-    <h2>한달간의 누적 트렌드</h2>
-    1. 워드 클라우드 이미지<br>
-    2. 일자별 키워드별 꺾은선 그래프
+    <div th:if="${item != null}" th:object="${item}">
+        <h2>한달간의 누적 트렌드</h2>
+        <img th:src="*{wordCloud}">
+        <div class="chart-wrap">
+            <canvas id="lineChart2"></canvas>
+        </div>
+    </div>
+
+    <script type="application/json" id="chart-data" th:utext="*{keywords}"></script>
 </section>
 </html>
