@@ -22,7 +22,7 @@
 
     <th:block th:unless="${json == null}">
         <h2>현재 트렌드</h2>
-        <img th:src="${wordCloud}" alt="오늘 워드클라우드" style="max-width: 50%; height: auto;">
+        <img th:src="${now.wordCloud}" alt="오늘 워드클라우드" style="max-width: 50%; height: auto;">
 
         <div class="chart-wrap">
             <canvas id="now-chart"></canvas>
