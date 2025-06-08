@@ -4,14 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.ourspring.admin.trend.controllers.TrendSearch;
+import org.ourspring.admin.trend.controllers.TrendUrl;
 import org.ourspring.global.configs.FileProperties;
 import org.ourspring.global.configs.PythonProperties;
 import org.ourspring.trend.entities.NewsTrend;
 import org.ourspring.trend.entities.Trend;
 import org.ourspring.trend.repositories.TrendRepository;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
@@ -20,7 +19,6 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Lazy
 @Service
 @RequiredArgsConstructor
 @EnableConfigurationProperties({PythonProperties.class, FileProperties.class})
@@ -79,7 +77,7 @@ public class NewsTrendService {
     @Scheduled(fixedRate = 24L, timeUnit = TimeUnit.HOURS)
     public void scheduledJob() {
         try {
-            TrendSearch search = new TrendSearch();
+            TrendUrl search = new TrendUrl();
             search.setSiteUrl("https://sports.daum.net/"); // 테스트 진행을 위한 임의 세팅 | 홈페이지에서 조회하기를 누르면 값이 설정됨
             if(search.getSiteUrl() == null || search.getSiteUrl().isBlank()) return;
 

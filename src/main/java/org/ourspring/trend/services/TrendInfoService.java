@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.ourspring.admin.trend.controllers.TrendUrl;
 import org.ourspring.global.search.CommonSearch;
 import org.ourspring.trend.entities.Trend;
 import org.ourspring.trend.exceptions.TrendNotFoundException;
@@ -23,7 +24,7 @@ public class TrendInfoService {
 
     private final TrendRepository repository;
 
-    //private final TrendCrawllingService crawllingService;
+    private final TrendCrawllingService crawllingService;
 
     private final ObjectMapper om;
 
@@ -36,6 +37,7 @@ public class TrendInfoService {
     public Trend getLatest(String category) {
         Trend item = repository.getLatest(category).orElseThrow(TrendNotFoundException::new);
 
+        TrendUrl search = new TrendUrl();
         return item;
     }
 
@@ -67,9 +69,10 @@ public class TrendInfoService {
     }
 
 
-/*
+
     // 트렌드 데이터 조회
     public Map<String, Object> getStat(String url) {
+
         crawllingService.process(url); // 데이터 한번 수집
 
         Map<String, Object> statData = new HashMap<>(); // 통계 데이터
@@ -156,12 +159,13 @@ public class TrendInfoService {
 
         try {
             String json = om.writeValueAsString(items);
+
             return crawllingService.createWordCloud(json);
+
         } catch (JsonProcessingException e) {}
 
         return null;
     }
-*/
 
     /**
      * 7일 간의 날짜 데이터 조회
