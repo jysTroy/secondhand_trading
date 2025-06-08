@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -40,9 +41,16 @@ public class TrendController extends CommonController {
     @GetMapping("/etc")
     public String etc(@ModelAttribute TrendSearch search, Model model) {
         commonProcess("etc", model);
+        String url = search.getSiteUrl();
+
+        if (StringUtils.hasText(url)) {
+            Map<String, Object> data = infoService.getStat(url);
+            model.addAllAttributes(data);
 
         return "admin/trend/etc";
     }
+
+
 
     /**
      * 공통 처리
@@ -68,4 +76,6 @@ public class TrendController extends CommonController {
         model.addAttribute("addScript", addScript);
         model.addAttribute("pageTitle", pageTitle);
     }
+
+
 }
