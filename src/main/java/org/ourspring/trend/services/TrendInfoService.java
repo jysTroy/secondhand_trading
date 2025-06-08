@@ -95,7 +95,6 @@ public class TrendInfoService {
         Map<LocalDate, Map<String, Integer>> last7DayData = preprocessing(last7Days);
         statData.put("oneWeek", last7DayData);
         statData.put("oneWeekWordCloud", getWordCloudPath(last7DayData));
-        // 일주일간 통계 E
 
         // 한달 트렌드
         search.setSDate(last30Date);
