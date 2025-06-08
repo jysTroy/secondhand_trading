@@ -3,6 +3,7 @@ package org.ourspring.admin.trend.controllers;
 import lombok.RequiredArgsConstructor;
 import org.ourspring.admin.global.controllers.CommonController;
 import org.ourspring.trend.entities.Trend;
+import org.ourspring.trend.entities.TrendUrl;
 import org.ourspring.trend.services.TrendInfoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,10 +48,14 @@ public class TrendController extends CommonController {
         if (StringUtils.hasText(url)) {
             Map<String, Object> data = infoService.getStat(url);
             model.addAllAttributes(data);
-
         }
+
         return "admin/trend/etc";
     }
+
+
+
+
 
     /**
      * 공통 처리
@@ -58,7 +63,7 @@ public class TrendController extends CommonController {
      * @param code : 서브메뉴 코드
      * @param model
      */
-    private void commonProcess(String code, Model model){
+    private void commonProcess(String code, Model model) {
         code = StringUtils.hasText(code) ? code : "news";
 
         String pageTitle = "";
@@ -77,5 +82,5 @@ public class TrendController extends CommonController {
         model.addAttribute("pageTitle", pageTitle);
     }
 
-}
 
+}

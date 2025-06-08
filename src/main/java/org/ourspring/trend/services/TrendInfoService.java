@@ -166,5 +166,4 @@ public class TrendInfoService {
         return null;
     }
 
-
 }
