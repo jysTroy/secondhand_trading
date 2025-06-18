@@ -9,41 +9,31 @@
 
 <section layout:fragment="content">
     <h1>오늘의 트렌드</h1>
-    <form name="frmSearch" method="get" th:object="${trendUrl}" autocomplete="off">
+    <form name="frmSearch" method="get" th:object="${trendSearch}" autocomplete="off">
         사이트 주소 :
         <input type="text" name="siteUrl" th:field="*{siteUrl}">
         <button type="submit">조회하기</button>
     </form>
-
     <th:block th:if="${json == null}">
         <div class="message">트렌드를 조회할 사이트 주소를 입력하세요.</div>
     </th:block>
-
     <th:block th:unless="${json == null}">
-        <h2>현재 트렌드</h2>
-        <img th:src="${now.wordCloud}" alt="오늘 워드클라우드" style="max-width: 50%; height: auto;">
-
+        <img th:src="${now.wordCloud}">
         <div class="chart-wrap">
             <canvas id="now-chart"></canvas>
         </div>
-
         <h2>일주일간의 누적 트렌드</h2>
-        <img th:src="${oneWeekWordCloud}" alt="일주일 워드클라우드" style="max-width: 50%; height: auto;">
+        <img th:src="${oneWeekWordCloud}">
 
-        <div class="chart-wrap">
-            <canvas id="week-chart"></canvas>
-        </div>
-
+        <canvas id="week-chart"></canvas>
 
         <h2>한달간의 누적 트렌드</h2>
-        <img th:src="${oneMonthWordCloud}" alt="한달 워드클라우드" style="max-width: 50%; height: auto;">
+        <img th:src="${oneMonthWordCloud}">
 
-        <div class="chart-wrap">
-            <canvas id="month-chart"></canvas>
-        </div>
+        <canvas id="month-chart"></canvas>
 
         <script type="application/json" id="chart-data" th:utext="${json}"></script>
     </th:block>
-</section>
 
+</section>
 </html>
