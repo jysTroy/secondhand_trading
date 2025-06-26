@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.koreait.global.constants.Gender;
 import org.koreait.global.libs.Utils;
 import org.koreait.survey.diabetes.constants.SmokingHistory;
+import org.koreait.survey.diabetes.entities.DiabetesSurvey;
+import org.koreait.survey.diabetes.services.DiabetesSurveyInfoService;
 import org.koreait.survey.diabetes.services.DiabetesSurveyService;
 import org.koreait.survey.diabetes.validators.DiabetesSurveyValidator;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,7 @@ public class DiabetesSurveyController {
     private final Utils utils;
     private final DiabetesSurveyValidator validator;
     private final DiabetesSurveyService surveyService;
+    private final DiabetesSurveyInfoService infoService;
 
     @ModelAttribute("addCss")
     public List<String> addCss() {
@@ -36,6 +39,7 @@ public class DiabetesSurveyController {
         RequestDiabetesSurvey form = new RequestDiabetesSurvey();
         form.setGender(Gender.FEMALE);
         form.setSmokingHistory(SmokingHistory.CURRENT);
+
         return form;
     }
 
@@ -49,9 +53,10 @@ public class DiabetesSurveyController {
         return SmokingHistory.values();
     }
 
-    @GetMapping("/step1")
+    @GetMapping({"", "/step1"})
     public String step1(@ModelAttribute RequestDiabetesSurvey form, Model model) {
         commonProcess("step", model);
+
         return utils.tpl("survey/diabetes/step1");
     }
 
@@ -59,14 +64,15 @@ public class DiabetesSurveyController {
     public String step2(@Valid RequestDiabetesSurvey form, Errors errors, Model model) {
         commonProcess("step", model);
 
-        validator.validate(form,errors);
+        validator.validate(form, errors);
 
         if (errors.hasErrors()) {
-            return utils.tpl("survey/diabetes/step1");
+           return utils.tpl("survey/diabetes/step1");
         }
 
         return utils.tpl("survey/diabetes/step2");
     }
+
 
     /**
      * 설문 저장 및 결과 처리
@@ -86,13 +92,17 @@ public class DiabetesSurveyController {
         }
 
         // 설문 결과 및 저장 처리
-        surveyService.process(form);
+        DiabetesSurvey item = surveyService.process(form);
 
-        // 처리 완료 후 세션 값으로 더 이상 변경되지 않도록 완료 처리
+        // 처리 완료 후 세션값으로 더이상 변경되지 않도록 완료 처리
         status.setComplete();
 
-        return "redirect:/survey/diabetes/result/설문번호";
+        // 양식데이터 초기화
+        model.addAttribute("requestDiabetesSurvey", requestDiabetesSurvey());
+
+        return "redirect:/survey/diabetes/result/" + item.getSeq();
     }
+
 
     /**
      * 설문 결과 보기
@@ -102,6 +112,10 @@ public class DiabetesSurveyController {
     @GetMapping("/result/{seq}")
     public String result(@PathVariable("seq") Long seq, Model model) {
         commonProcess("result", model);
+
+        DiabetesSurvey item = infoService.get(seq);
+        model.addAttribute("item", item);
+
 
         return utils.tpl("survey/diabetes/result");
     }
@@ -117,6 +131,7 @@ public class DiabetesSurveyController {
         String pageTitle = "";
         if (mode.equals("step")) {
             pageTitle = utils.getMessage("당뇨_고위험군_테스트");
+
         } else if (mode.equals("result")) {
             pageTitle = utils.getMessage("당뇨_고위험군_테스트_결과");
         }

@@ -31,18 +31,18 @@ public class DiabetesSurveyPredictServiceTest {
 
     @Test
     void test2() {
-//        List<Number> item = List.of(1, 46.0, 0.0, 0.0, 3, 29.6, 5.8, 130);
-//        List<Number> item = List.of(1, 41, 0, 0, 0, 29.6, 8.2, 126);
-//        boolean result = service.isDiabetes(item);
-//        System.out.println(result);
+        //List<Number> item = List.of(1, 46.0, 0.0, 0.0, 3, 29.6, 5.8, 130);
+        //List<Number> item = List.of(1, 41, 0, 0, 0,29.6, 8.2, 126);
+        //boolean result = service.isDiabetes(item);
+        //System.out.println(result);
         RequestDiabetesSurvey form = new RequestDiabetesSurvey();
         form.setGender(Gender.MALE);
         form.setAge(41);
         form.setHypertension(false);
         form.setHeartDisease(false);
         form.setSmokingHistory(SmokingHistory.EVER);
-        form.setHeight(210);
-        form.setWeight(100);
+        form.setHeight(178.5);
+        form.setWeight(120);
         form.setHbA1c(8.2);
         form.setBloodGlucoseLevel(126);
 
