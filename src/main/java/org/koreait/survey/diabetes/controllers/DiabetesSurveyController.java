@@ -2,6 +2,7 @@ package org.koreait.survey.diabetes.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.koreait.global.annotations.ApplyCommonController;
 import org.koreait.global.constants.Gender;
 import org.koreait.global.libs.Utils;
 import org.koreait.survey.diabetes.constants.SmokingHistory;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/survey/diabetes")
 @SessionAttributes("requestDiabetesSurvey")
+@ApplyCommonController
 public class DiabetesSurveyController {
 
     private final Utils utils;

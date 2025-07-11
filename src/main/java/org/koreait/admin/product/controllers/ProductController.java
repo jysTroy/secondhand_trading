@@ -3,6 +3,7 @@ package org.koreait.admin.product.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.koreait.admin.global.controllers.CommonController;
+import org.koreait.global.annotations.ApplyCommonController;
 import org.koreait.product.constants.ProductStatus;
 import org.koreait.product.services.ProductUpdateService;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/product")
+@ApplyCommonController
 public class ProductController extends CommonController {
 
     private final ProductUpdateService updateService;
