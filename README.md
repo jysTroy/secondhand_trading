@@ -84,7 +84,9 @@
 
 ## 당뇨 고위험군 진단 설문 서비스
 - 주예성
-  - 
+  - train.py – 초기 모델 학습
+  - predict.py – 예측 요청 처리
+  - partial_train.py – DB 기반 추가 학습
 
 # 4. 기능 설명
 
@@ -119,7 +121,14 @@
 - model.pkl, scaler.pkl, target.pkl 사용
 - 추천된 식당 seq 리스트를 JSON으로 출력
 
-
+## 당뇨병 고위험군 설문
+- diabetes_prediction_dataset.csv 파일을 읽어 당뇨 유무 예측 모델 학습
+- 성별, 흡연이력 등 범주형 데이터를 숫자로 인코딩
+- SGDClassifier와 GridSearchCV를 이용한 최적 모델 선택
+- 학습 완료 후 model.pkl, scaler.pkl 저장
+- 외부에서 사용자 설문 결과(특징 8개)를 전달받아 당뇨 여부 예측
+- 저장된 모델(model.pkl)과 스케일러(scaler.pkl) 사용
+- MySQL DB에서 SURVEY_DIABETES 테이블의 미학습 데이터 조회
 
 # 5. 코드 리뷰
 
@@ -184,6 +193,16 @@
 - _, indexes = model.kneighbors(current)  # 가까운 이웃 찾기
 - items = target[indexes][0].tolist()     # 해당 인덱스의 식당 seq 추출
 
+## diabetes/train.py
+- params = {'max_iter': np.arange(90,120)}
+- gs = GridSearchCV(SGDClassifier(loss='log_loss'), params, ...)
+- gs.fit(train_scaled, train_target)
+
+## diabetes/predict.py
+- data = np.array(json.loads(sys.argv[1]))
+- data_scaled = scaler.transform(data)
+- predictions = model.predict(data_scaled)
+
 ## admin/product/list.html
 
 - HTML form 태그의 action 속성을 설정
@@ -222,6 +241,15 @@
 
 ## 상품 목록 관리자 페이지
 ![img_4.png](img_4.png)
+
+## 위치기반 식당 추천 서비스
+
+
+## 당뇨 고위험군 진단 설문 서비스
+
+
+## 당뇨 고위험군 진단 설문 서비스 결과
+
 
 
 
