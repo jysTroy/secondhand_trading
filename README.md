@@ -249,7 +249,7 @@
 ![img_6.png](img_6.png)
 
 ## 당뇨 고위험군 진단 설문 서비스 결과
-![img_7.png](img7.png)
+![img_7.png](img_7.png)
 
 
 
