@@ -53,7 +53,7 @@
   - 트렌드 데이터 조회 코드 작업
   - README 파일 작성
 - 송근호 
-  - sevoce 작업
+  - sevice 작업
   - 상품 삭제 기능 작성 
 
 ## 상품검색,관리
@@ -76,6 +76,15 @@
 - 송근호
   - service 작업
   - 상품 삭제 기능 작성
+ 
+## 위치기반 식당 추천 서비스
+- 주예성
+  - train.py – 학습용 스크립트 작업
+  - search.py – 추천 요청 처리 작업
+
+## 당뇨 고위험군 진단 설문 서비스
+- 주예성
+  - 
 
 # 4. 기능 설명
 
@@ -102,6 +111,15 @@
 
 ## 상품 삭제, 상태관리
 - 상품 목록에서 상품 삭제 및 상태 변경을 한다.
+
+## 식당 추천 
+- 식당 좌표(lat, lon) → 인접 이웃 학습
+- KNeighborsClassifier 모델을 학습하고, 필요한 데이터를 pkl로 저장
+- 현재 위치(lat, lon) 기준으로 KNN 추천 결과 반환
+- model.pkl, scaler.pkl, target.pkl 사용
+- 추천된 식당 seq 리스트를 JSON으로 출력
+
+
 
 # 5. 코드 리뷰
 
@@ -146,10 +164,25 @@
   - getList에 상품 객체를 넣어 줌(mapper)
 
 ## ProductManageService
-
 - processBatch 메서드를 정의
   - 처리할 상품이 있을때 삭제처리 및 상태변경 처리 기능
   - 기존 회원 관리에서 사용한 방법이지만 다른 방식을 시도하여 실제로 사용은 안함.
+ 
+## restaurant/train.py
+- data = pd.read_json(url)  # 식당 데이터 JSON으로 로드 (예: lat, lon, seq)
+- train_input = data[['lat', 'lon']].to_numpy()  # 학습용 위치 좌표
+- train_target = data['seq'].to_numpy()          # 식별자 (식당 고유번호)
+- ss = StandardScaler()       # 좌표 정규화 (KNN 성능 향상용)
+- kn = KNeighborsClassifier(p=1)  # KNN 분류기, p=1이면 Manhattan distance 사용
+
+## restaurant/search.py
+- lat = float(sys.argv[1])  # 사용자 위도
+- lon = float(sys.argv[2])  # 사용자 경도
+- num = int(sys.argv[3]) if len(sys.argv) > 3 else 10  # 추천할 식당 수
+- current = scaler.transform(np.array([[lat, lon]]))  # 현재 위치 정규화
+- model.n_neighbors = num  # 추천 개수 설정
+- _, indexes = model.kneighbors(current)  # 가까운 이웃 찾기
+- items = target[indexes][0].tolist()     # 해당 인덱스의 식당 seq 추출
 
 ## admin/product/list.html
 
