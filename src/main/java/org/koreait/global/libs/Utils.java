@@ -140,7 +140,7 @@ public class Utils {
             e.printStackTrace();
         }
 
-        url = StringUtils.hasText(url) ? url : request.getContextPath() + "/common/images/no_image.jpg";
+        url = StringUtils.hasText(url) ? url : request.getContextPath() + "/common/images/ddabong.jpg";
 
         return String.format("<img src='%s' class='%s%s'>", url, "image-" + seq,StringUtils.hasText(addClass)? " " + addClass : "");
     }
@@ -163,7 +163,7 @@ public class Utils {
      * @return
      */
     public String printNoImage() {
-        String url = request.getContextPath() + "/common/images/no_image.jpg";
+        String url = request.getContextPath() + "/common/images/ddabong.jpg";
 
         return String.format("<img src='%s'>", url);
     }

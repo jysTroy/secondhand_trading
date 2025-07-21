@@ -3,7 +3,9 @@
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="~{front/layouts/main}">
     <main layout:fragment="content">
-        <h1 th:text="${pageTitle}"></h1>
+
+        <!-- <h1 th:text="${pageTitle}"></h1> -->
+
         <form name="frmLogin" method="post" th:action="@{/member/login}" autocomplete="off" th:object="${requestLogin}">
             <input type="hidden" name="redirectUrl" th:field="*{redirectUrl}">
             <ul>
@@ -16,7 +18,7 @@
                     <div class="error" th:each="err : ${#fields.errors('password')}" th:text="${err}"></div>
                 </li>
                 <li>
-                    <div class="left">
+                    <div class="left auto-login-checkbox">
                         <input type="checkbox" name="autoLogin" value="true" th:field="*{autoLogin}" id="auto-login">
                         <label for="auto-login" th:text="#{자동_로그인}"></label>
                     </div>

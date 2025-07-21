@@ -7,7 +7,7 @@ commonLib.mapLib = {
         // 카카오 맵 SDK 자바스크립트가 추가된 상태가 아니라면 추가
         if (!document.getElementById("kakao-map-sdk")) {
             const scriptEl = document.createElement("script");
-            scriptEl.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=...&autoload=false";
+            scriptEl.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=2c77b1985c176db589f739dcee2c37de&autoload=false";
             scriptEl.id = "kakao-map-sdk";
             headEl.prepend(scriptEl);
 
