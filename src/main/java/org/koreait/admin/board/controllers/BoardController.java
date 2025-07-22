@@ -1,17 +1,26 @@
 package org.koreait.admin.board.controllers;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.koreait.admin.board.validators.BoardValidator;
 import org.koreait.admin.global.controllers.CommonController;
 import org.koreait.member.constants.Authority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/admin/board")
+@RequiredArgsConstructor
 public class BoardController extends CommonController {
+
+    private final BoardValidator boardValidator;
+
     @Override
     @ModelAttribute("mainCode")
     public String mainCode() {
@@ -50,6 +59,22 @@ public class BoardController extends CommonController {
         form.setPageCount(10);
 
         return "admin/board/register";
+    }
+
+    // 수정 및 등록에서도 save 가져올거임 그래서 다르게 설정함
+    @PostMapping("/save")
+    public String save(@Valid RequestBoard form, Errors errors, Model model) {
+        String mode = form.getMode();
+        mode = StringUtils.hasText(mode) ? mode : "register";
+        commonProcess(mode, model);
+
+        boardValidator.validate(form, errors);
+
+        if (errors.hasErrors()) {
+            return "admin/board/" + mode;
+        }
+
+        return "redirect:/admin/board";
     }
 
     /**
