@@ -97,7 +97,6 @@ public class FileUploadService {
                 // 업로드 실패시 저장된 DB 데이터 삭제
                 repository.deleteById(seq);
                 repository.flush();
-
                 e.printStackTrace();
             }
         }

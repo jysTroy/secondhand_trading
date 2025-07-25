@@ -7,10 +7,7 @@ var commonLib = {
     * @param isText : false - json : text
     */
     ajaxLoad(url, successCallback, failureCallback, method = 'GET', body, header, isText = false) {
-        // context path를 고려한 주소 변경
-        let baseUrl = document.querySelector("meta[name='base_url']").content;
-        baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/'));
-        url = baseUrl + url;
+        url = commonLib.getUrl(url);
 
         const options = {
             method,
@@ -48,8 +45,60 @@ var commonLib = {
                     failureCallback(err);
                 }
             });
+    },
+    /**
+    * ContextPath 기준 경로
+    *
+    */
+    getUrl(url) {
+        let baseUrl = document.querySelector("meta[name='base_url']").content;
+        baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/'));
+
+        return url ? baseUrl + url : baseUrl;
     }
 }
+
+/* 에디터 공통 */
+commonLib.loadEditor = function(el, height = 350) {
+    if (!ClassicEditor || !el) {
+        return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+        (async () => {
+            try {
+                const editor = await ClassicEditor.create(el);
+                resolve(editor);
+
+                editor.editing.view.change((writer) => {
+                    writer.setStyle(
+                        "height", `${height}px`,
+                        editor.editing.view.document.getRoot()
+                    );
+                });
+
+            } catch (err) {
+                console.error(err);
+                reject(err);
+            }
+        })();
+    });
+};
+
+/**
+* source : 이미지 경로, 배열 또는 문자열(경로 1개)
+*
+*/
+commonLib.insertEditorImage = function(source, editor) {
+    editor = editor ?? window.editor;
+    if (!editor || !source || (Array.isArray(source) && source.length === 0)) return;
+
+    source = Array.isArray(source) ? source : [source];
+
+    editor.execute('insertImage', { source })
+
+};
+
 
 /* window.alert를 SweetAlert2로 교체 */
 window.alert = function(message, callback) {
@@ -62,3 +111,16 @@ window.alert = function(message, callback) {
         }
     })
 };
+
+window.addEventListener("DOMContentLoaded", function() {
+    // 이미지 상세보기 처리 S
+    const { fileManager } = commonLib;
+    const showImages = document.getElementsByClassName("show-image");
+    for (const el of showImages) {
+        el.addEventListener("click", function() {
+            const { seq } = this.dataset;
+            fileManager.showImage(seq);
+        });
+    }
+    // 이미지 상세보기 처리 E
+});

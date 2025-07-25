@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller("adminBoardController")
 @ApplyCommonController
-@RequestMapping("/admin/board")
 @RequiredArgsConstructor
+@RequestMapping("/admin/board")
 public class BoardController extends CommonController {
 
     private final BoardConfigValidator boardConfigValidator;
@@ -35,7 +35,6 @@ public class BoardController extends CommonController {
 
     /**
      * 게시판 목록
-     * @param model
      * @return
      */
     @GetMapping({"", "/list"})
@@ -59,7 +58,7 @@ public class BoardController extends CommonController {
     public String register(@ModelAttribute RequestBoard form, Model model) {
         commonProcess("register", model);
 
-        // 기본 값 설정
+        // 기본값 설정
         form.setSkin("default");
         form.setListAuthority(Authority.ALL);
         form.setViewAuthority(Authority.ALL);
@@ -109,7 +108,7 @@ public class BoardController extends CommonController {
         code = StringUtils.hasText(code) ? code : "list";
         if (code.equals("register")) {
             pageTitle = "게시판 등록";
-        } else if (code.equals("update")){
+        } else if (code.equals("update")) {
             pageTitle = "게시판 수정";
         } else {
             pageTitle = "게시판 목록";

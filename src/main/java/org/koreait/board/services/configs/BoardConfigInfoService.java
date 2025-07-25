@@ -25,7 +25,6 @@ import java.util.List;
 
 import static org.springframework.data.domain.Sort.Order.desc;
 
-
 @Lazy
 @Service
 @RequiredArgsConstructor
@@ -36,7 +35,7 @@ public class BoardConfigInfoService {
     private final ModelMapper mapper;
 
     /**
-     * 게시판 설정 한 개 조회
+     * 게시판 설정 한개 조회
      *
      * @param bid
      * @return
@@ -68,10 +67,9 @@ public class BoardConfigInfoService {
      * @return
      */
     public ListData<Board> getList(CommonSearch search) {
-        // 1 미만일 땐 조회 안됨
         int page = Math.max(search.getPage(), 1);
         int limit = search.getLimit();
-        limit =limit < 1 ? 20 : limit;
+        limit = limit < 1 ? 20 : limit;
 
         String sopt = search.getSopt();
         String skey = search.getSkey();
@@ -80,7 +78,7 @@ public class BoardConfigInfoService {
         QBoard board = QBoard.board;
 
         // 키워드 검색 처리 S
-        sopt = StringUtils.hasText(sopt) ? sopt.toUpperCase()  : "ALL";
+        sopt = StringUtils.hasText(sopt) ? sopt.toUpperCase() : "ALL";
         if (StringUtils.hasText(skey)) {
             skey = skey.trim();
 
@@ -98,9 +96,9 @@ public class BoardConfigInfoService {
         // 키워드 검색 처리 E
 
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(desc("createdAt")));
-        Page<Board> data = repository.findAll(andBuilder,pageable);
+        Page<Board> data = repository.findAll(andBuilder, pageable);
         List<Board> items = data.getContent();
-        items.forEach(this::addInfo); // 추가 정보 처리
+        items.forEach(this::addInfo); // 추가정보 처리
 
         int total = (int)data.getTotalElements();
         Pagination pagination = new Pagination(page, total, 10, limit, request);
