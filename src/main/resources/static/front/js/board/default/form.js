@@ -8,6 +8,28 @@ window.addEventListener("DOMContentLoaded", function() {
         })
     // 위지윅 에디터 로드 E
 
+    // 파일 삭제 이벤트 처리
+    const { fileManager, insertEditorImage } = commonLib;
+    const removeEls = document.querySelectorAll(".file-items .remove");
+    removeEls.forEach(el => {
+        el.addEventListener("click", function() {
+            if (!confirm('정말 삭제하겠습니까?')) {
+                return;
+            }
+
+            const { seq } = this.dataset;
+            fileManager.delete(seq);
+        });
+    });
+
+    // 이미지를 에디터 본문 추가 이벤트 처리
+    const insertEditorEls = document.querySelectorAll(".file-items .insert-editor");
+    insertEditorEls.forEach(el => {
+        el.addEventListener("click", function() {
+            const { fileUrl } = this.dataset;
+            insertEditorImage(fileUrl);
+        });
+    });
 });
 
 
@@ -47,20 +69,31 @@ function fileUploadCallback(items) {
         // 템플릿 치환
         tpl = tpl.replace(/\[seq\]/g, seq)
                 .replace(/\[fileName\]/g, fileName)
-                .replace(/\[fileUrl\]/g, fileUrl)
+                .replace(/\[fileUrl\]/g, fileUrl);
         const dom = domParser.parseFromString(tpl, "text/html");
         const fileItem = dom.querySelector(".file-items");
 
         targetEl.append(fileItem);
 
-        const removeEL = fileItem.querySelector(".remove");
+        const removeEl = fileItem.querySelector(".remove");
         if (removeEl) {
             const { fileManager } = commonLib;
             removeEl.addEventListener("click", function() {
-                if (confirm('레알 삭제할꺼임?')) {
+                if (confirm('정말 삭제하겠습니까?')) {
                     fileManager.delete(seq);
                 }
             });
         }
+
+        const insertEditorEl = fileItem.querySelector(".insert-editor");
+        if (insertEditorEl) {
+            insertEditorEl.addEventListener("click", () => insertEditorImage(fileUrl));
+        }
     }
+}
+
+// 파일 삭제 후 후속처리
+function fileDeleteCallback({seq}) {
+    const el = document.getElementById(`file-${seq}`);
+    if (el) el.parentElement.removeChild(el);
 }

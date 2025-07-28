@@ -2,6 +2,9 @@ package org.koreait.board.controllers;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.koreait.file.entities.FileInfo;
+
+import java.util.List;
 
 @Data
 public class RequestBoard {
@@ -14,6 +17,8 @@ public class RequestBoard {
 
     @NotBlank
     private String gid;
+
+    private String category;
 
     @NotBlank
     private String poster;
@@ -28,5 +33,8 @@ public class RequestBoard {
     private boolean secret; // 비밀글 여부
 
     private boolean guest; // 비회원 게시글 작성, 수정 여부
+
+    private List<FileInfo> editorImages;
+    private List<FileInfo> attachFiles;
 
 }

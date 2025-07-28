@@ -1,14 +1,21 @@
 package org.koreait.board.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.koreait.board.entities.Board;
+import org.koreait.board.entities.BoardData;
+import org.koreait.board.services.BoardUpdateService;
 import org.koreait.board.services.configs.BoardConfigInfoService;
+import org.koreait.board.validators.BoardValidator;
+import org.koreait.file.constants.FileStatus;
+import org.koreait.file.services.FileInfoService;
 import org.koreait.global.annotations.ApplyCommonController;
 import org.koreait.global.libs.Utils;
 import org.koreait.member.libs.MemberUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -19,13 +26,15 @@ import java.util.UUID;
 @ApplyCommonController
 @RequiredArgsConstructor
 @RequestMapping("/board")
-// 싱글톤 객체라 다른 사용자가 접근하면 문제가됨(값이 바뀜) 그래서 세션 이용
 @SessionAttributes({"board"})
 public class BoardController {
 
     private final Utils utils;
     private final MemberUtil memberUtil;
     private final BoardConfigInfoService configInfoService;
+    private final BoardUpdateService updateService;
+    private final FileInfoService fileInfoService;
+    private final BoardValidator boardValidator;
 
     @ModelAttribute("board")
     public Board getBoard() {
@@ -36,6 +45,7 @@ public class BoardController {
     @GetMapping("/list/{bid}")
     public String list(@PathVariable("bid") String bid, @ModelAttribute BoardSearch search, Model model) {
         commonProcess(bid, "list", model);
+
         return utils.tpl("board/list");
     }
 
@@ -59,13 +69,42 @@ public class BoardController {
     @GetMapping("/update/{seq}")
     public String update(@PathVariable("seq") Long seq, Model model) {
         commonProcess(seq, "update", model);
+
         return utils.tpl("board/update");
+    }
+
+    @PostMapping("/save")
+    public String save(@Valid RequestBoard form, Errors errors, Model model) {
+        String mode = form.getMode();
+        commonProcess(form.getBid(), mode, model);
+
+        if (mode.equals("update")) {
+
+        } else { // 게시글 등록시
+            form.setGuest(!memberUtil.isLogin());
+        }
+
+        boardValidator.validate(form, errors);
+
+        if (errors.hasErrors()) {
+            String gid = form.getGid();
+            form.setEditorImages(fileInfoService.getList(gid, "editor", FileStatus.ALL));
+            form.setAttachFiles(fileInfoService.getList(gid, "attach", FileStatus.ALL));
+
+            return utils.tpl("board/" + mode);
+        }
+
+        // 게시글 저장 처리
+        BoardData item = updateService.process(form);
+
+        return "redirect:/board/list/" + form.getBid();
     }
 
     // 게시글 보기
     @GetMapping("/view/{seq}")
     public String view(@PathVariable("seq") Long seq, Model model) {
         commonProcess(seq, "view", model);
+
         return utils.tpl("board/view");
     }
 
@@ -74,14 +113,12 @@ public class BoardController {
     public String delete(@PathVariable("seq") Long seq, Model model, @SessionAttribute("board") Board board) {
         commonProcess(seq, "delete", model);
 
-        // (위치해있던) 게시판 목록으로 이동하기 위해 게시판 아이디 넣어야함
-        // 그렇기에 session 이용할거임
         return "redirect:/board/list/" + board.getBid();
     }
 
     /**
      * bid 기준의 공통 처리
-     * - 게시글 설정 조회가 공통처리
+     *  - 게시글 설정조회가 공통 처리
      *
      * @param bid
      * @param mode
@@ -94,7 +131,7 @@ public class BoardController {
         List<String> addCommonScript = new ArrayList<>();
         List<String> addCss = new ArrayList<>();
         List<String> addScript = new ArrayList<>();
-        String pageTitle = board.getName(); // 게시판명
+        String pageTitle = board.getName(); // 게시판 명
 
         String skin = board.getSkin();
         addCss.add("board/style"); // 스킨과 상관없는 공통 스타일
@@ -103,16 +140,15 @@ public class BoardController {
         addScript.add("board/common"); // 스킨 상관없는 공통 자바스크립트
 
         if (mode.equals("write") || mode.equals("update")) { // 등록, 수정
-          if (board.isAttachFile() || (board.isImageUpload() && board.isEditor())) {
-              addCommonScript.add("fileManager");
-          }
+            if (board.isAttachFile() || (board.isImageUpload() && board.isEditor())) {
+                addCommonScript.add("fileManager");
+            }
 
-          if (board.isEditor()) { // 에디터를 사용하는 경우, CKEDITOR5 스크립트를 추가
-              addCommonScript.add("ckeditor/ckeditor");
+            if (board.isEditor()) { // 에디터를 사용하는 경우, CKEDITOR5 스크립트를 추가
+                addCommonScript.add("ckeditor5/ckeditor");
+            }
 
-          }
-
-          addScript.add(String.format("board/%s/form", skin)); // 스킨별 양식 관련 자바스크립트
+            addScript.add(String.format("board/%s/form", skin)); // 스킨별 양식 관련 자바스크립트
         }
 
         model.addAttribute("addCommonScript", addCommonScript);
@@ -124,8 +160,7 @@ public class BoardController {
 
     /**
      * seq 기준의 공통 처리
-     * - 게시글 조회가 공통처리
-     *
+     *  - 게시글 조회가 공통 처리 ...
      * @param seq
      * @param mode
      * @param model
@@ -133,5 +168,4 @@ public class BoardController {
     private void commonProcess(Long seq, String mode, Model model) {
 
     }
-
 }
