@@ -73,6 +73,7 @@ public class BoardController {
         return utils.tpl("board/update");
     }
 
+    // 게시글 저장
     @PostMapping("/save")
     public String save(@Valid RequestBoard form, Errors errors, Model model) {
         String mode = form.getMode();
