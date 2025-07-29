@@ -75,7 +75,7 @@ public class BoardController {
 
     // 게시글 저장
     @PostMapping("/save")
-    public String save(@Valid RequestBoard form, Errors errors, Model model) {
+    public String save(@Valid RequestBoard form, Errors errors, Model model, @SessionAttribute("board") Board board) {
         String mode = form.getMode();
         commonProcess(form.getBid(), mode, model);
 
@@ -97,8 +97,9 @@ public class BoardController {
 
         // 게시글 저장 처리
         BoardData item = updateService.process(form);
+        String redirectUrl = board.isAfterWritingRedirect() ? "view/" + item.getSeq() : "list/" + form.getBid();
 
-        return "redirect:/board/list/" + form.getBid();
+        return "redirect:/board/" + redirectUrl;
     }
 
     // 게시글 보기
