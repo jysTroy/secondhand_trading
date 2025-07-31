@@ -1,6 +1,7 @@
 var commonLib = commonLib ?? {}
 
 commonLib.fileManager = {
+    callback: null,
     /**
     * 파일 업로드
     *
@@ -53,6 +54,10 @@ commonLib.fileManager = {
                if (typeof fileUploadCallback === 'function') {
                     fileUploadCallback(items);
                }
+
+               if (typeof callback === 'function') {
+               callback();
+               }
             }, (err) => {
                 // 실패시 후속 처리
                 alert('파일 업로드에 실패하였습니다.');
@@ -101,6 +106,10 @@ window.addEventListener("DOMContentLoaded", function() {
         const { gid, location, single, imageOnly } = fileEl;
 
         const { fileManager } = commonLib;
+
+        fileManager.callback = () => {
+            fileEl.value = "";
+        };
 
         fileManager.upload(files, gid, location, imageOnly, single);
 

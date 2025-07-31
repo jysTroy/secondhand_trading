@@ -181,4 +181,12 @@ public class Utils {
 
         return String.format("%s://%s%s%s%s", protocol, domain, port, request.getContextPath(), url);
     }
+
+    /**
+     * 줄개행 문자인 \n 또는 \r\n를 <br>로 변환
+     */
+    public String nl2br(String text) {
+        return text.replaceAll("\r", "")
+                .replaceAll("\n", "<br>");
+    }
 }
