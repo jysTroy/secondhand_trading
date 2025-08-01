@@ -1,14 +1,17 @@
 package org.koreait.board.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.koreait.board.entities.Board;
 import org.koreait.board.entities.BoardData;
+import org.koreait.board.entities.Comment;
 import org.koreait.board.exceptions.GuestPasswordCheckException;
 import org.koreait.board.services.*;
 import org.koreait.board.services.configs.BoardConfigInfoService;
 import org.koreait.board.validators.BoardValidator;
+import org.koreait.board.validators.CommentValidator;
 import org.koreait.file.constants.FileStatus;
 import org.koreait.file.services.FileInfoService;
 import org.koreait.global.annotations.ApplyCommonController;
@@ -26,13 +29,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
 @ApplyCommonController
 @RequiredArgsConstructor
 @RequestMapping("/board")
-@SessionAttributes({"board"})
 public class BoardController {
 
     private final Utils utils;
@@ -45,13 +48,12 @@ public class BoardController {
     private final BoardAuthService authService;
     private final FileInfoService fileInfoService;
     private final BoardValidator boardValidator;
+    private final CommentValidator commentValidator;
+    private final CommentUpdateService commentUpdateService;
+    private final CommentInfoService commentInfoService;
     private final PasswordEncoder encoder;
     private final HttpSession session;
-
-    @ModelAttribute("board")
-    public Board getBoard() {
-        return new Board();
-    }
+    private final HttpServletRequest request;
 
     // 게시글 목록
     @GetMapping("/list/{bid}")
@@ -93,9 +95,10 @@ public class BoardController {
 
     // 게시글 저장
     @PostMapping("/save")
-    public String save(@Valid RequestBoard form, Errors errors, Model model, @SessionAttribute("board") Board board) {
+    public String save(@Valid RequestBoard form, Errors errors, Model model) {
         String mode = form.getMode();
         commonProcess(form.getBid(), mode, model);
+        Board board = (Board)model.getAttribute("board");
 
         if (mode.equals("update")) { // 게시글 등록시
             form.setGuest(!memberUtil.isLogin());
@@ -120,10 +123,12 @@ public class BoardController {
 
     // 게시글 보기
     @GetMapping("/view/{seq}")
-    public String view(@PathVariable("seq") Long seq, Model model, @SessionAttribute("board") Board board) {
+    public String view(@PathVariable("seq") Long seq, Model model) {
         commonProcess(seq, "view", model);
 
-        if (board.isShowViewList()) { // 게시글 보기 하단에 목록 노출
+        Board board = (Board)model.getAttribute("board");
+
+        if (board != null && board.isShowViewList()) { // 게시글 보기 하단에 목록 노출
             BoardSearch search = new BoardSearch();
             ListData<BoardData> data = infoService.getList(board.getBid(), search);
             model.addAttribute("items", data.getItems());
@@ -134,14 +139,65 @@ public class BoardController {
         // 게시글 조회수 업데이트
         viewCountService.update(seq);
 
+        // 댓글 기본값 처리
+        if (board != null && board.isComment()) {
+            if (board.isCommentable()) { // 댓글 작성 가능 여부
+                RequestComment commentForm = new RequestComment();
+                if (memberUtil.isLogin()) { // 로그인 상태라면 로그인한 회원 이름으로 초기값
+                    commentForm.setCommenter(memberUtil.getMember().getName());
+                } else {
+                    commentForm.setGuest(true);
+                }
+                commentForm.setBoardDataSeq(seq);
+                commentForm.setMode("comment_write");
+                model.addAttribute("requestComment", commentForm);
+            }
+
+            // 댓글 목록
+            model.addAttribute("comments", commentInfoService.getList(seq));
+        }
+
         return utils.tpl("board/view");
+    }
+
+    @PostMapping("/comment")
+    public String comment(@Valid RequestComment form, Errors errors, Model model) {
+
+        commentValidator.validate(form, errors);
+
+        if (errors.hasErrors()) {
+            for (Map.Entry<String, List<String>> entry : utils.getErrorMessages(errors).entrySet()) {
+                String message = entry.getValue().getFirst();
+                throw new AlertException(message, HttpStatus.BAD_REQUEST);
+            }
+        }
+        // 댓글 작성 처리
+        Comment item = commentUpdateService.process(form);
+
+        // 댓글 작성이 완료되면 부모창을 새로고침
+//        model.addAttribute("script", String.format("parent.location.replace('%s/board/view/%s#comment-%s')", form.getBoardDataSeq(), item.getSeq()));
+        model.addAttribute("script", "parent.location.reload();");
+        return "common/_execute_script";
+    }
+
+    // 댓글 수정
+    @GetMapping("/comment/{seq}")
+    public String commentUpdate(@PathVariable("seq") Long seq, Model model) {
+        commonProcess(seq, "comment_update", model);
+
+        RequestComment form = commentInfoService.getForm(seq);
+        model.addAttribute("requestComment", form);
+
+        return utils.tpl("board/comment_update");
     }
 
     // 게시글 삭제
     @GetMapping("/delete/{seq}")
-    public String delete(@PathVariable("seq") Long seq, Model model, @SessionAttribute("board") Board board) {
+    public String delete(@PathVariable("seq") Long seq, Model model) {
         commonProcess(seq, "delete", model);
         deleteService.process(seq);
+
+        Board board = (Board)model.getAttribute("board");
 
         return "redirect:/board/list/" + board.getBid();
     }
@@ -149,24 +205,35 @@ public class BoardController {
     // 비회원 글수정, 글삭제 비밀번호 확인
     @ExceptionHandler(GuestPasswordCheckException.class)
     public String guestPassword(Model model) {
-
+        model.addAttribute("isLogin", memberUtil.isLogin());
+        model.addAttribute("isAdmin", memberUtil.isAdmin());
+        model.addAttribute("loggedMember", memberUtil.getMember());
         model.addAttribute("pageTitle", utils.getMessage("비회원_비밀번호_확인"));
         return utils.tpl("board/password");
     }
 
     // 비회원 글수정, 글삭제 비밀번호 확인
     @PostMapping("/password")
-    public String guestPasswordCheck(@RequestParam(name="password", required = false) String password, Model model, @SessionAttribute("board_guest_seq") Long seq) {
+    public String guestPasswordCheck(@RequestParam(name="password", required = false) String password, Model model, @SessionAttribute(name="board_guest_seq", required = false) Long seq, @SessionAttribute(name="comment_guest_seq", required = false) Long commentSeq) {
         if (StringUtils.hasText(password)) {
             throw new AlertException(utils.getMessage("비밀번호를_입력하세요."), HttpStatus.BAD_REQUEST);
         }
-
+        String guestPw = null, mode = null;
+        if (commentSeq != null) { // 댓글
+            Comment item = commentInfoService.get(commentSeq);
+            guestPw = item.getGuestPw();
+            mode = "comment";
+        } else { // 게시글
+            BoardData item = infoService.get(seq);
+            guestPw = item.getGuestPw();
+            mode = "board";
+        }
         BoardData item = infoService.get(seq);
         if (!encoder.matches(password, item.getGuestPw())) {
             throw new AlertException(utils.getMessage("비밀번호가_일치하지_않습니다."), HttpStatus.BAD_REQUEST);
         }
 
-        session.setAttribute("board_seq_" + seq, true); // 비회원 비밀번호 확인 완료
+        session.setAttribute(mode +"_seq_" + seq, true); // 비회원 비밀번호 확인 완료
 
         model.addAttribute("script", "parent.location.reload();");
         return "common/_execute_script";
@@ -229,10 +296,18 @@ public class BoardController {
      * @param model
      */
     private void commonProcess(Long seq, String mode, Model model) {
-        BoardData item = infoService.get(seq);
+        BoardData item = null;
+
+        if (mode.equals("comment_update") || mode.equals("comment_delete")) { // 댓글 수정, 삭제일 경우
+            Comment comment =commentInfoService.get(seq);
+            item = comment.getItem();
+            model.addAttribute("comment", comment);
+        } else {
+            item = infoService.get(seq);
+        }
         model.addAttribute("item", item);
 
-        authService.check(mode, seq); // 글보기, 글수정 권한 체크
+        authService.check(mode, seq); // 글보기, 글수정, 댓글 수정, 댓글 삭제 시 권한 체크
 
         Board board = item.getBoard();
         commonProcess(board.getBid(), mode, model);
